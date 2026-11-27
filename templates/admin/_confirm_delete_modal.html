@@ -1,0 +1,23 @@
+<!-- Modal de confirmação para exclusão permanente de perfis (usado em users.html e companies.html) -->
+<div class="modal-overlay" id="confirm-delete-modal">
+  <div class="modal-box" style="max-width: 460px;">
+    <button type="button" class="modal-close-btn" onclick="closeModal('confirm-delete-modal')" aria-label="Fechar">&times;</button>
+    <h3 style="font-size: 20px; font-weight: 800; color: #DC2626; margin-bottom: 10px;">
+      <i class="fas fa-triangle-exclamation"></i> Excluir perfil
+    </h3>
+    <p style="font-size: 14.5px; color: var(--text-primary); margin-bottom: 8px;">
+      Você vai excluir <strong id="confirm-delete-name"></strong>.
+    </p>
+    <p id="confirm-delete-detail" style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 20px;"></p>
+    <p style="font-size: 13px; font-weight: 700; color: #DC2626; margin-bottom: 20px;">Esta ação não pode ser desfeita.</p>
+
+    <form id="confirm-delete-form" method="POST" action="">
+      <div class="admin-modal-actions">
+        <button type="button" class="btn-senai-outline" onclick="closeModal('confirm-delete-modal')">Cancelar</button>
+        <button type="submit" class="btn-danger-solid">
+          <i class="fas fa-trash"></i> Excluir definitivamente
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Gerenciamento de Empresas — Painel Nexa SENAI{% endblock %}
+
+{% block content %}
+<div class="admin-page" style="max-width: 1140px; margin: 0 auto;">
+  <div style="margin-bottom: 18px;">
+    <a href="{{ url_for('admin.dashboard') }}" style="color: var(--text-secondary); font-size: 14px; font-weight: 600;">
+      <i class="fas fa-arrow-left"></i> Voltar ao Painel Admin
+    </a>
+  </div>
+
+  <div class="admin-page-header">
+    <div>
+      <h1 class="page-main-title" style="text-align: left; margin-bottom: 4px;">
+        Empresas Patrocinadoras e Parceiras
+      </h1>
+      <p style="font-size: 14px; color: var(--text-secondary);">
+        Cadastre novas empresas com CNPJ validado e gerencie códigos de acesso empresarial.
+      </p>
+    </div>
+
+    <button type="button" class="btn-senai" onclick="openModal('add-company-modal')">
+      <i class="fas fa-plus"></i> Nova Empresa Parceira
+    </button>
+  </div>
+
+  <!-- Tabela de Empresas Cadastradas -->
+  <div class="nexa-card admin-table-wrap" style="padding: 24px;">
+    <table class="admin-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px;">
+      <thead>
+        <tr style="border-bottom: 2px solid var(--border-light); color: var(--text-secondary);">
+          <th style="padding: 12px 14px;">Empresa</th>
+          <th style="padding: 12px 14px;">CNPJ (Validado)</th>
+          <th style="padding: 12px 14px;">Setor</th>
+          <th style="padding: 12px 14px;">Código de Acesso</th>
+          <th style="padding: 12px 14px;">Status</th>
+          <th style="padding: 12px 14px; text-align: right;">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for comp in companies %}
+          <tr style="border-bottom: 1px solid var(--border-light);">
+            <td data-label="Empresa" class="cell-main" style="padding: 14px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="{{ comp.logo_url }}" alt="{{ comp.name }}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                <div>
+                  <strong style="color: var(--text-primary); display: block;">{{ comp.name }}</strong>
+                  <span style="font-size: 11.5px; color: var(--text-muted);">{{ comp.contact_email }}</span>
+                </div>
+              </div>
+            </td>
+            <td data-label="CNPJ" style="padding: 14px; font-family: monospace;">{{ comp.cnpj }}</td>
+            <td data-label="Setor" style="padding: 14px;">{{ comp.sector }}</td>
+            <td data-label="Código de acesso" style="padding: 14px;">
+              <code style="background-color: #FEF2F2; color: var(--senai-red); padding: 4px 8px; border-radius: 4px; font-weight: bold;">
+                {{ comp.access_code }}
+              </code>
+            </td>
+            <td data-label="Status" style="padding: 14px;">
+              <span class="job-badge-pill" style="font-size: 11px; font-weight: 700; {% if comp.is_blocked %}background-color: #FEE2E2; color: #DC2626;{% else %}background-color: #DCFCE7; color: #166534;{% endif %}">
+                {{ 'Bloqueada' if comp.is_blocked else 'Ativa' }}
+              </span>
+            </td>
+            <td data-label="Ações" class="cell-actions" style="padding: 14px; text-align: right;">
+              <div class="action-group">
+                <!-- Redefinir Código -->
+                <form action="{{ url_for('admin.reset_company_code', company_id=comp.id) }}" method="POST" onsubmit="return confirm('Gerar um novo código de acesso para a empresa {{ comp.name }}?');">
+                  <button type="submit" class="btn-senai-outline btn-sm" title="Gerar Novo Código">
+                    <i class="fas fa-key"></i> Novo Código
+                  </button>
+                </form>
+
+                <!-- Bloquear / Ativar -->
+                <form action="{{ url_for('admin.toggle_company_status', company_id=comp.id) }}" method="POST">
+                  <button type="submit" class="btn-sm" style="{% if comp.is_blocked %}background-color: #16A34A; color: white; border: none; border-radius: var(--radius-pill); cursor: pointer;{% else %}background-color: #DC2626; color: white; border: none; border-radius: var(--radius-pill); cursor: pointer;{% endif %} padding: 6px 12px;">
+                    {{ 'Desbloquear' if comp.is_blocked else 'Bloquear' }}
+                  </button>
+                </form>
+
+                <a href="{{ url_for('company.profile_view', company_id=comp.id) }}" class="btn-senai-outline btn-sm" target="_blank" title="Ver perfil público" aria-label="Ver perfil público">
+                  <i class="fas fa-eye"></i>
+                </a>
+
+                <!-- Excluir perfil da empresa -->
+                <button type="button" class="btn-sm btn-danger-outline"
+                        data-delete-url="{{ url_for('admin.delete_company', company_id=comp.id) }}"
+                        data-delete-name="{{ comp.name }}"
+                        data-delete-detail="O perfil da empresa, todas as vagas publicadas, as candidaturas recebidas e as publicações serão apagados."
+                        onclick="openDeleteModal(this)">
+                  <i class="fas fa-trash"></i> Excluir
+                </button>
+              </div>
+            </td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="6" class="cell-empty" style="padding: 14px; text-align: center; color: var(--text-muted);">
+              Nenhuma empresa cadastrada.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal para Cadastrar Nova Empresa -->
+<div class="modal-overlay" id="add-company-modal">
+  <div class="modal-box" style="max-width: 620px;">
+    <button type="button" class="modal-close-btn" onclick="closeModal('add-company-modal')">&times;</button>
+    <h3 style="font-size: 20px; font-weight: 800; color: var(--senai-red); margin-bottom: 8px;">
+      Autorizar Nova Empresa Parceira
+    </h3>
+    <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 20px;">
+      O CNPJ passará por validação matemática estrita. O código de acesso gerado permitirá à empresa fazer seu primeiro login na plataforma.
+    </p>
+
+    <form action="{{ url_for('admin.companies') }}" method="POST">
+      <div class="auth-input-group">
+        <label class="auth-input-label">Razão Social / Nome da Empresa *</label>
+        <input type="text" name="name" class="auth-input-field" placeholder="Ex: WEG S.A., Bosch Brasil, Totvs..." required>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="auth-input-group">
+          <label class="auth-input-label">CNPJ Oficial *</label>
+          <input type="text" name="cnpj" class="auth-input-field" placeholder="00.000.000/0000-00" data-mask="cnpj" required>
+        </div>
+
+        <div class="auth-input-group">
+          <label class="auth-input-label">E-mail Institucional *</label>
+          <input type="email" name="email" class="auth-input-field" placeholder="contato@empresa.com.br" required>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="auth-input-group">
+          <label class="auth-input-label">Setor da Indústria</label>
+          <input type="text" name="sector" class="auth-input-field" placeholder="Ex: Automação, Software, Metalmecânica" value="Indústria e Tecnologia">
+        </div>
+
+        <div class="auth-input-group">
+          <label class="auth-input-label">Código de Acesso Personalizado (Opcional):</label>
+          <input type="text" name="access_code" class="auth-input-field" placeholder="Deixe em branco para gerar automático">
+        </div>
+      </div>
+
+      <div class="auth-input-group">
+        <label class="auth-input-label">Localização (Cidade - UF):</label>
+        <input type="text" name="location" class="auth-input-field" placeholder="São Paulo - SP" value="São Paulo - SP">
+      </div>
+
+      <div class="admin-modal-actions" style="margin-top: 24px;">
+        <button type="button" class="btn-senai-outline" onclick="closeModal('add-company-modal')">Cancelar</button>
+        <button type="submit" class="btn-senai">Cadastrar e Gerar Código</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% include 'admin/_confirm_delete_modal.html' %}
+{% endblock %}

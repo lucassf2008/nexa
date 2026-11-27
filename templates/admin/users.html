@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Usuários da Plataforma — Painel Nexa SENAI{% endblock %}
+
+{% block content %}
+<div class="admin-page" style="max-width: 1140px; margin: 0 auto;">
+  <div style="margin-bottom: 18px;">
+    <a href="{{ url_for('admin.dashboard') }}" style="color: var(--text-secondary); font-size: 14px; font-weight: 600;">
+      <i class="fas fa-arrow-left"></i> Voltar ao Painel Admin
+    </a>
+  </div>
+
+  <h1 class="page-main-title" style="text-align: left; margin-bottom: 24px;">
+    Gestão de Usuários da Rede Nexa SENAI
+  </h1>
+
+  <!-- Pré-Cadastro de Alunos Autorizados (CPF e E-mail) -->
+  <div class="nexa-card" style="padding: 24px; margin-bottom: 28px;">
+    <h3 style="font-size: 18px; font-weight: 800; color: var(--senai-red); margin-bottom: 6px;">
+      <i class="fas fa-user-check"></i> Pré-Cadastro de Alunos (CPF e E-mail)
+    </h3>
+    <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 18px;">
+      Novos alunos só conseguem criar uma conta se o CPF e o e-mail estiverem previamente cadastrados aqui.
+    </p>
+
+    <form action="{{ url_for('admin.authorize_student') }}" method="POST" class="admin-inline-form">
+      <div class="auth-input-group" style="margin-bottom: 0;">
+        <label class="auth-input-label">CPF do Aluno *</label>
+        <input type="text" name="cpf" class="auth-input-field" placeholder="000.000.000-00" data-mask="cpf" required>
+      </div>
+      <div class="auth-input-group" style="margin-bottom: 0;">
+        <label class="auth-input-label">E-mail Institucional *</label>
+        <input type="email" name="email" class="auth-input-field" placeholder="aluno@aluno.senai.br" required>
+      </div>
+      <button type="submit" class="btn-senai admin-inline-form-btn">
+        <i class="fas fa-plus"></i> Pré-Cadastrar
+      </button>
+    </form>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table" style="width: 100%; border-collapse: collapse; font-size: 13.5px;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border-light); color: var(--text-secondary); text-align: left;">
+            <th style="padding: 10px 12px;">CPF Autorizado</th>
+            <th style="padding: 10px 12px;">E-mail Autorizado</th>
+            <th style="padding: 10px 12px;">Situação</th>
+            <th style="padding: 10px 12px; text-align: right;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for auth_st in authorized_students %}
+            <tr style="border-bottom: 1px solid var(--border-light);">
+              <td data-label="CPF" style="padding: 10px 12px; font-family: monospace;">{{ auth_st.cpf }}</td>
+              <td data-label="E-mail" style="padding: 10px 12px;">{{ auth_st.email }}</td>
+              <td data-label="Situação" style="padding: 10px 12px;">
+                <span class="job-badge-pill" style="font-size: 11px; {% if auth_st.is_used %}background-color: #DCFCE7; color: #166534;{% else %}background-color: #FEF3C7; color: #92400E;{% endif %}">
+                  {{ 'Conta criada' if auth_st.is_used else 'Aguardando cadastro' }}
+                </span>
+              </td>
+              <td data-label="Ações" class="cell-actions" style="padding: 10px 12px; text-align: right;">
+                {% if not auth_st.is_used %}
+                  <form action="{{ url_for('admin.delete_authorized_student', auth_id=auth_st.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Remover este pré-cadastro?');">
+                    <button type="submit" class="btn-sm" style="background-color: #DC2626; color: white; border: none; border-radius: var(--radius-pill); cursor: pointer;">
+                      Remover
+                    </button>
+                  </form>
+                {% else %}
+                  <span style="font-size: 12px; color: var(--text-muted);">Em uso</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="4" class="cell-empty" style="padding: 14px; text-align: center; color: var(--text-muted);">
+                Nenhum pré-cadastro pendente ou registrado.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Alunos -->
+  <div class="nexa-card" style="padding: 24px; margin-bottom: 28px;">
+    <h3 style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 16px;">
+      Alunos e Ex-Alunos do SENAI ({{ students|length }})
+    </h3>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table" style="width: 100%; border-collapse: collapse; font-size: 13.5px;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border-light); color: var(--text-secondary); text-align: left;">
+            <th style="padding: 10px 12px;">Aluno</th>
+            <th style="padding: 10px 12px;">CPF</th>
+            <th style="padding: 10px 12px;">Curso SENAI</th>
+            <th style="padding: 10px 12px;">Cidade</th>
+            <th style="padding: 10px 12px;">Status</th>
+            <th style="padding: 10px 12px; text-align: right;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for st in students %}
+            <tr style="border-bottom: 1px solid var(--border-light);">
+              <td data-label="Aluno" class="cell-main" style="padding: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <img src="{{ st.avatar_url }}" alt="{{ st.full_name }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                  <div>
+                    <strong style="color: var(--text-primary); display: block;">{{ st.full_name }}</strong>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">{{ st.user.email }}</span>
+                  </div>
+                </div>
+              </td>
+              <td data-label="CPF" style="padding: 12px; font-family: monospace;">{{ st.cpf }}</td>
+              <td data-label="Curso SENAI" style="padding: 12px;">{{ st.senai_course }}</td>
+              <td data-label="Cidade" style="padding: 12px;">{{ st.city }} - {{ st.state }}</td>
+              <td data-label="Status" style="padding: 12px;">
+                <span class="job-badge-pill" style="font-size: 11px; {% if not st.user.is_active %}background-color: #FEE2E2; color: #DC2626;{% else %}background-color: #DCFCE7; color: #166534;{% endif %}">
+                  {{ 'Inativo / Bloqueado' if not st.user.is_active else 'Ativo' }}
+                </span>
+              </td>
+              <td data-label="Ações" class="cell-actions" style="padding: 12px; text-align: right;">
+                <div class="action-group">
+                  <a href="{{ url_for('profile.student_profile', student_id=st.id) }}" class="btn-senai-outline btn-sm" target="_blank">
+                    Ver Perfil
+                  </a>
+                  <form action="{{ url_for('admin.toggle_user_active', user_id=st.user.id) }}" method="POST">
+                    <button type="submit" class="btn-sm" style="{% if st.user.is_active %}background-color: #DC2626; color: white; border: none; border-radius: var(--radius-pill); cursor: pointer;{% else %}background-color: #16A34A; color: white; border: none; border-radius: var(--radius-pill); cursor: pointer;{% endif %}">
+                      {{ 'Bloquear' if st.user.is_active else 'Ativar' }}
+                    </button>
+                  </form>
+                  <button type="button" class="btn-sm btn-danger-outline"
+                          data-delete-url="{{ url_for('admin.delete_student', student_id=st.id) }}"
+                          data-delete-name="{{ st.full_name }}"
+                          data-delete-detail="O perfil, as experiências, competências, candidaturas, publicações e mensagens deste aluno serão apagados."
+                          onclick="openDeleteModal(this)">
+                    <i class="fas fa-trash"></i> Excluir
+                  </button>
+                </div>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6" class="cell-empty" style="padding: 14px; text-align: center; color: var(--text-muted);">
+                Nenhum aluno cadastrado.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% include 'admin/_confirm_delete_modal.html' %}
+{% endblock %}
