@@ -1,0 +1,328 @@
+/* ==========================================================================
+   NEXA SENAI - RESPONSIVIDADE (Mobile, Tablet, Desktop)
+   ========================================================================== */
+
+/* Telas Grandes e Médias (Desktop Menor / Notebooks) */
+@media (max-width: 1200px) {
+  .red-flank-bar {
+    width: 10px;
+  }
+  .red-flank-bar.left { left: 8px; }
+  .red-flank-bar.right { right: 8px; }
+  .main-stage-wrapper {
+    padding: 0 20px;
+  }
+  .company-profile-layout {
+    grid-template-columns: 380px 1fr;
+  }
+}
+
+/* Tablets e Telas Médias (max-width: 992px) */
+@media (max-width: 992px) {
+  .jobs-page-grid {
+    grid-template-columns: 1fr;
+  }
+  .feed-page-layout {
+    grid-template-columns: 1fr;
+  }
+  .student-profile-layout {
+    grid-template-columns: 1fr;
+  }
+  .company-profile-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .filters-card {
+    margin-bottom: 24px;
+  }
+  
+  .messages-sidebar-card {
+    position: static;
+    margin-top: 24px;
+  }
+  
+  .nav-search {
+    max-width: 280px;
+  }
+}
+
+/* Dispositivos Móveis (Smartphones, max-width: 768px) */
+@media (max-width: 768px) {
+  .nexa-navbar {
+    height: auto;
+    padding: 10px 0;
+  }
+
+  .navbar-inner {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .nav-brand {
+    order: 1;
+  }
+
+  .nav-search {
+    order: 3;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .nav-links {
+    order: 2;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    max-width: 100%;
+  }
+
+  .nav-item-link {
+    font-size: 13px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+
+  /* Em celulares, reduz as barras vermelhas para preservar espaço de tela */
+  .red-flank-bar {
+    width: 6px;
+  }
+  .red-flank-bar.left { left: 4px; }
+  .red-flank-bar.right { right: 4px; }
+  
+  .main-stage-wrapper {
+    padding: 0 12px;
+  }
+
+  .page-main-title {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .job-item-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .job-thumb-container {
+    width: 100%;
+    height: 140px;
+  }
+
+  .job-actions-area {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .auth-card-box {
+    padding: 24px 20px;
+    margin: 10px;
+  }
+
+  .profile-header-flex {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-contact-meta {
+    justify-content: center;
+  }
+
+  .profile-badges-row {
+    justify-content: center;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .footer-links-list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .footer-social-block {
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   PAINEL ADMINISTRATIVO — responsividade
+   ========================================================================== */
+
+/* Tablet: grids do painel em uma coluna */
+@media (max-width: 992px) {
+  .admin-two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Desktop: CPF/CNPJ/código sem quebra de linha e botões de ação em até duas linhas */
+@media (min-width: 993px) {
+  .admin-table td[data-label="CPF"],
+  .admin-table td[data-label="CNPJ"],
+  .admin-table td[data-label="Código de acesso"] {
+    white-space: nowrap;
+  }
+
+  .admin-table td.cell-actions {
+    min-width: 250px;
+  }
+}
+
+/* Celular */
+@media (max-width: 768px) {
+  .admin-page .nexa-card {
+    padding: 16px !important;
+  }
+
+  .admin-page .page-main-title {
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  .admin-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-header-actions {
+    flex-direction: column;
+  }
+
+  .admin-header-actions > a,
+  .admin-page-header > .btn-senai {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .admin-inline-form,
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-inline-form-btn {
+    width: 100%;
+  }
+
+  .admin-list-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Tabelas viram cartões empilhados (um por linha da tabela) */
+  .admin-table-wrap {
+    overflow-x: visible;
+  }
+
+  .admin-table,
+  .admin-table tbody,
+  .admin-table tr,
+  .admin-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-table thead {
+    display: none;
+  }
+
+  .admin-table tr {
+    border: 1px solid var(--border-light) !important;
+    border-radius: var(--radius-md);
+    background-color: #FFFFFF;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+  }
+
+  .admin-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 0 !important;
+    text-align: right !important;
+    word-break: break-word;
+  }
+
+  .admin-table td[data-label]::before {
+    content: attr(data-label);
+    flex: 0 0 36%;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+
+  .admin-table td.cell-main,
+  .admin-table td.cell-actions,
+  .admin-table td.cell-empty {
+    display: block;
+    text-align: left !important;
+  }
+
+  .admin-table td.cell-main::before,
+  .admin-table td.cell-actions::before {
+    display: none;
+  }
+
+  .admin-table td.cell-empty {
+    text-align: center !important;
+  }
+
+  .admin-table td.cell-actions {
+    border-top: 1px solid var(--border-light);
+    margin-top: 6px;
+    padding-top: 12px !important;
+  }
+
+  .admin-table .action-group {
+    display: flex;
+    justify-content: stretch;
+    width: 100%;
+  }
+
+  .admin-table .action-group > form {
+    flex: 1 1 calc(50% - 8px);
+  }
+
+  .admin-table .action-group > a,
+  .admin-table .action-group > button {
+    flex: 1 1 calc(50% - 8px);
+  }
+
+  /* Botões com área de toque confortável */
+  .admin-table .action-group .btn-sm,
+  .admin-table .action-group button,
+  .admin-table .action-group a {
+    width: 100%;
+    min-height: 42px;
+    justify-content: center;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  /* Modais ocupam a tela inteira de forma confortável */
+  .modal-overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .modal-box {
+    padding: 22px 18px;
+    max-height: 92vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 12px 12px;
+  }
+
+  .admin-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .admin-modal-actions > button {
+    width: 100%;
+    min-height: 44px;
+  }
+}

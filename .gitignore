@@ -1,0 +1,31 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches
+.pytest_cache/
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+
+# Banco de dados local
+*.db
+*.sqlite
+*.sqlite3
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+
+# IDEs
+.vscode/
+.idea/
+
+# Sistema
+Thumbs.db
+Desktop.ini
